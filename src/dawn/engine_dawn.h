@@ -70,8 +70,6 @@ class EngineDawn : public Engine {
   ComputePipelineInfo compute_pipeline_info_;
   // Accumulated data for the current render pipeline.
   RenderPipelineInfo render_pipeline_info_;
-  // Clear colour values for red, green, blue, and alpha in the range 0.0 through 1.0.
-  ClearColorCommand clear_color_;
 };
 
 }  // namespace dawn

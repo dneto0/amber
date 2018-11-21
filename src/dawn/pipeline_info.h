@@ -15,8 +15,10 @@
 #ifndef SRC_DAWN_PIPELINE_INFO_H_
 #define SRC_DAWN_PIPELINE_INFO_H_
 
+#include <cstdint>
 #include "amber/result.h"
 #include "dawn/dawncpp.h"
+#include "src/command.h"
 
 namespace amber {
 namespace dawn {
@@ -30,11 +32,29 @@ class RenderPipelineInfo {
   // Returns true if this render pipeline is configured at all.
   operator bool() { return vertex_shader_ && fragment_shader_; }
 
+  void SetClearColorValue(const ClearColorCommand& value) {
+    clear_color_value_ = value;
+  }
+  const ClearColorCommand& SetClearColorValue() const {
+    return clear_color_value_;
+  }
+
+  void SetClearDepthValue(float depth) { clear_depth_value_ = depth; }
+  float GetClearDepthValue() const { return clear_depth_value_; }
+
+  void SetClearStencilValue(float depth) { clear_stencil_value_ = depth; }
+  float GetClearStencilValue() const { return clear_stencil_value_; }
+
  private:
   ::dawn::ShaderModule vertex_shader_;
   ::dawn::ShaderModule fragment_shader_;
+
   // TODO(dneto): Create a default framebuffer colour target when needed.
-  // TODO(dneto): Record stencil info?
+
+  ClearColorCommand clear_color_value_;
+  float clear_depth_value_ = 0.0;
+  uint32_t clear_stencil_value_ = 0;
+
   // TODO(dneto): Record index data
   // TODO(dneto): Record buffer data
 };

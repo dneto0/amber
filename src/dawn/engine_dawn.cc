@@ -54,9 +54,7 @@ Result EngineDawn::Shutdown() {
 }
 
 Result EngineDawn::CreatePipeline(PipelineType type) {
-
   switch (type) {
-
     case PipelineType::kCompute: {
       auto module = module_for_type_[ShaderType::kCompute];
       if (!module)
@@ -76,7 +74,6 @@ Result EngineDawn::CreatePipeline(PipelineType type) {
             "CreatePipeline: no vertex shader provided for graphics pipeline");
       render_pipeline_info_ = std::move(RenderPipelineInfo(vs, fs));
     } break;
-
   }
 
   return {};
@@ -114,16 +111,24 @@ Result EngineDawn::SetBuffer(BufferType,
 }
 
 Result EngineDawn::DoClearColor(const ClearColorCommand* command) {
-  clear_color_ = *command;
+  if (!render_pipeline_info_)
+    return Result("DoClearColor: pipeline has not yet been created");
+  render_pipeline_info_.SetClearColorValue(*command);
   return {};
 }
 
-Result EngineDawn::DoClearStencil(const ClearStencilCommand*) {
-  return Result("Dawn:DoClearStencil not implemented");
+Result EngineDawn::DoClearStencil(const ClearStencilCommand* command) {
+  if (!render_pipeline_info_)
+    return Result("DoClearStencil: pipeline has not yet been created");
+  render_pipeline_info_.SetClearStencilValue(command->GetValue());
+  return {};
 }
 
-Result EngineDawn::DoClearDepth(const ClearDepthCommand*) {
-  return Result("Dawn:DoClearDepth not implemented");
+Result EngineDawn::DoClearDepth(const ClearDepthCommand* command) {
+  if (!render_pipeline_info_)
+    return Result("DoClearDepth: pipeline has not yet been created");
+  render_pipeline_info_.SetClearDepthValue(command->GetValue());
+  return {};
 }
 
 Result EngineDawn::DoClear(const ClearCommand*) {
