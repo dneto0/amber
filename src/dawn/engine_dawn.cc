@@ -113,8 +113,9 @@ Result EngineDawn::SetBuffer(BufferType,
   return Result("Dawn:SetBuffer not implemented");
 }
 
-Result EngineDawn::DoClearColor(const ClearColorCommand*) {
-  return Result("Dawn:DoClearColor not implemented");
+Result EngineDawn::DoClearColor(const ClearColorCommand* command) {
+  clear_color_ = *command;
+  return {};
 }
 
 Result EngineDawn::DoClearStencil(const ClearStencilCommand*) {
