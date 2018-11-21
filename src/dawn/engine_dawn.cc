@@ -14,6 +14,7 @@
 
 #include "src/dawn/engine_dawn.h"
 
+#include <utility>
 #include "dawn/dawncpp.h"
 #include "src/dawn/device_metal.h"
 
@@ -52,8 +53,33 @@ Result EngineDawn::Shutdown() {
   return {};
 }
 
-Result EngineDawn::CreatePipeline(PipelineType) {
-  return Result("Dawn:CreatePipeline not implemented");
+Result EngineDawn::CreatePipeline(PipelineType type) {
+
+  switch (type) {
+
+    case PipelineType::kCompute: {
+      auto module = module_for_type_[ShaderType::kCompute];
+      if (!module)
+        return Result("CreatePipeline: no compute shader provided");
+      compute_pipeline_info_ = std::move(ComputePipelineInfo(module));
+    } break;
+
+    case PipelineType::kGraphics: {
+      // TODO(dneto): Handle other shader types as well.  They are optional.
+      auto vs = module_for_type_[ShaderType::kVertex];
+      auto fs = module_for_type_[ShaderType::kFragment];
+      if (!vs)
+        return Result(
+            "CreatePipeline: no vertex shader provided for graphics pipeline");
+      if (!fs)
+        return Result(
+            "CreatePipeline: no vertex shader provided for graphics pipeline");
+      render_pipeline_info_ = std::move(RenderPipelineInfo(vs, fs));
+    } break;
+
+  }
+
+  return {};
 }
 
 Result EngineDawn::AddRequirement(Feature, const Format*) {
