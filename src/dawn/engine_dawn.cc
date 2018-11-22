@@ -142,29 +142,35 @@ Result EngineDawn::DoClear(const ClearCommand* cmd) {
   return {};
 }
 
-Result EngineDawn::DoDrawRect(const DrawRectCommand*) {
-  return Result("Dawn:DoDrawRect not implemented");
+Result EngineDawn::DoDrawRect(const DrawRectCommand* cmd) {
+  pending_work_.emplace_back(*cmd);
+  return {};
 }
 
-Result EngineDawn::DoDrawArrays(const DrawArraysCommand*) {
-  return Result("Dawn:DoDrawArrays not implemented");
+Result EngineDawn::DoDrawArrays(const DrawArraysCommand* cmd) {
+  pending_work_.emplace_back(*cmd);
+  return {};
 }
 
-Result EngineDawn::DoCompute(const ComputeCommand*) {
-  return Result("Dawn:DoCompute not implemented");
+Result EngineDawn::DoCompute(const ComputeCommand* cmd) {
+  pending_work_.emplace_back(*cmd);
+  return {};
 }
 
-Result EngineDawn::DoEntryPoint(const EntryPointCommand*) {
-  return Result("Dawn:DoEntryPoint not implemented");
+Result EngineDawn::DoEntryPoint(const EntryPointCommand* cmd) {
+  pending_work_.emplace_back(*cmd);
+  return {};
 }
 
 Result EngineDawn::DoPatchParameterVertices(
-    const PatchParameterVerticesCommand*) {
-  return Result("Dawn:DoPatch not implemented");
+    const PatchParameterVerticesCommand* cmd) {
+  pending_work_.emplace_back(*cmd);
+  return {};
 }
 
-Result EngineDawn::DoBuffer(const BufferCommand*) {
-  return Result("Dawn:DoBuffer not implemented");
+Result EngineDawn::DoBuffer(const BufferCommand* cmd) {
+  pending_work_.emplace_back(*cmd);
+  return {};
 }
 
 Result EngineDawn::DoProcessCommands(uint32_t*,
