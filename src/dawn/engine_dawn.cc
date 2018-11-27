@@ -291,8 +291,9 @@ Result EngineDawn::DoCompute(const ComputeCommand*) {
   return Result("Dawn:DoCompute not implemented");
 }
 
-Result EngineDawn::DoEntryPoint(const EntryPointCommand*) {
-  return Result("Dawn:DoEntryPoint not implemented");
+Result EngineDawn::DoEntryPoint(const EntryPointCommand* cmd) {
+  entrypoint_for_type_[cmd->GetShaderType()] = cmd->GetEntryPointName();
+  return {};
 }
 
 Result EngineDawn::DoPatchParameterVertices(

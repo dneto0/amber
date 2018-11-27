@@ -15,6 +15,7 @@
 #ifndef SRC_DAWN_ENGINE_DAWN_H_
 #define SRC_DAWN_ENGINE_DAWN_H_
 
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -67,6 +68,11 @@ class EngineDawn : public Engine {
                            uint32_t* height,
                            const void** buf) override;
 
+  // Update the current entry point map.
+  void ProcessEntryPoint(const EntryPointCommand&);
+  using EntryPointMap =
+      std::unordered_map<ShaderType, std::string, CastHash<ShaderType>>;
+
  private:
   // Creates a command buffer builder if it doesn't already exist.
   Result EnsureCommandBufferBuilderExists();
@@ -88,10 +94,20 @@ class EngineDawn : public Engine {
 
   std::unordered_map<ShaderType, ::dawn::ShaderModule, CastHash<ShaderType>>
       module_for_type_;
+  // The entry point name to use for the given shader stage.  An empty string
+  // is the default, and will be created automatically if lookingup a shader
+  // type that hasn't yet been initialized.
+  std::unordered_map<ShaderType, std::string, CastHash<ShaderType>>
+      entrypoint_for_type_;
   // Accumulated data for the current compute pipeline.
   ComputePipelineInfo compute_pipeline_info_;
   // Accumulated data for the current render pipeline.
   RenderPipelineInfo render_pipeline_info_;
+
+ public:
+  const EntryPointMap& GetEntryPointMapForTest() const {
+    return entrypoint_for_type_;
+  }
 };
 
 }  // namespace dawn
