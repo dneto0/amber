@@ -50,6 +50,26 @@ TEST_F(EngineDawnTest, DoEntryPointSavesStageName) {
   EXPECT_EQ(std::string("sass"), where->second);
 }
 
+TEST_F(EngineDawnTest, ShutdownDestroysInternalState) {
+  EngineDawn e;
+  // Add something to e
+  {
+    EntryPointCommand cmd;
+    cmd.SetShaderType(ShaderType::kFragment);
+    cmd.SetEntryPointName("sass");
+    e.DoEntryPoint(&cmd);
+  }
+  auto& map = e.GetEntryPointMapForTest();
+  EXPECT_EQ(1u, map.size());
+  auto where = map.find(ShaderType::kFragment);
+  EXPECT_NE(map.end(), where);
+  EXPECT_EQ(std::string("sass"), where->second);
+
+  // Now destroy it.
+  e.Shutdown();
+  EXPECT_TRUE(e.GetEntryPointMapForTest().empty());
+}
+
 }  // namespace
 }  // namespace dawn
 }  // namespace amber

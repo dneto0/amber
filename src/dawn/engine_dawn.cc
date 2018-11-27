@@ -178,7 +178,7 @@ Result EngineDawn::InitializeWithDevice(void* default_device) {
 }
 
 Result EngineDawn::Shutdown() {
-  device_ = ::dawn::Device();
+  *this = EngineDawn();
   return {};
 }
 
