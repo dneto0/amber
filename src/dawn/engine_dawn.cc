@@ -256,11 +256,40 @@ Result EngineDawn::SetShader(ShaderType type,
   return {};
 }
 
-Result EngineDawn::SetBuffer(BufferType,
-                             uint8_t,
+Result EngineDawn::SetBuffer(BufferType type,
+                             uint8_t location,
                              const Format&,
-                             const std::vector<Value>&) {
-  return Result("Dawn:SetBuffer not implemented");
+                             const std::vector<Value>& data) {
+  // The buffer will be copied into, so we need the TransferDst bit.
+  ::dawn::BufferUsageBit usage = ::dawn::BufferUsageBit::TransferDst;
+  switch (type) {
+    case BufferType::kIndex:
+      render_pipeline_info_.index_buffer_location = location;
+      usage |= ::dawn::BufferUsageBit::Index;
+      break;
+    case BufferType::kVertex:
+      render_pipeline_info_.vertex_buffer_location = location;
+      usage |= ::dawn::BufferUsageBit::Vertex;
+      break;
+    default:
+      return Result("Dawn::SetBuffer: Unhandled buffer type");
+  }
+
+  ::dawn::BufferDescriptor descriptor;
+  descriptor.size = static_cast<uint32_t>(
+      reinterpret_cast<const uint8_t*>(data.data() + data.size()) -
+      reinterpret_cast<const uint8_t*>(data.data()));
+  descriptor.usage = usage;
+  ::dawn::Buffer buffer = device_.CreateBuffer(&descriptor);
+  if (!buffer)
+    return Result("Dawn::SetBuffer: Failed to create buffer");
+  buffer.SetSubData(0, descriptor.size,
+                    reinterpret_cast<const uint8_t*>(data.data()));
+  (type == BufferType::kIndex ? render_pipeline_info_.index_buffer
+                              : render_pipeline_info_.vertex_buffer) =
+      std::move(buffer);
+
+  return {};
 }
 
 Result EngineDawn::DoClearColor(const ClearColorCommand* command) {

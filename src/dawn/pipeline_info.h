@@ -51,6 +51,11 @@ struct RenderPipelineInfo {
   uint32_t fb_size = 0;
   const void* fb_data = nullptr;
 
+  uint32_t vertex_buffer_location = 0;
+  ::dawn::Buffer vertex_buffer;
+  uint32_t index_buffer_location = 0;
+  ::dawn::Buffer index_buffer;
+
   // TODO(dneto): Record index data
   // TODO(dneto): Record buffer data
 };
